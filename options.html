@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400" rel="stylesheet">
+    <link rel="stylesheet" href="source/fontawesome-5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="source/bootstrap/bootstrap-4.3.1.min.css">
+    <link rel="stylesheet" href="source/happyminder/style.css">
+
+    <title>Happy Minder</title>
+</head>
+
+<body>
+    <div class="jumbotron text-center bg-color-main">
+        <h1 class="font-weight-bolder">HAPPY MINDER</h1>
+        <p>Ayuda a cuidarte y potenciar tu felicidad</p>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                <div id="login-content" class="text-center">
+                    <h1><i class="fas fa-spinner fa-pulse"></i></h1>
+                </div>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+        <div id="primary-content" class="row" style="display: none;">
+            <div class="col-md-4 text-center">
+                <div>
+                    <button type="button" id="show-habits" class="btn btn-block bg-color-dark text-white mb-3">
+                        <h3 class="mt-2 mb-2"><i class="fas fa-smile-beam"></i></h3>
+                        <h5>Hábitos</h5>
+                    </button>
+                </div>
+                <div>
+                    <button type="button" id="show-links" class="btn btn-block bg-color-lighter text-white mb-3">
+                        <h3 class="mt-2 mb-2"><i class="fas fa-link"></i></h3>
+                        <p>Enlaces</p>
+                    </button>
+                </div>
+                <div>
+                    <button type="button" id="show-profile" class="btn btn-block bg-color-lighter text-white mb-3">
+                        <h3 class="mt-2 mb-2"><i class="fas fa-user-circle"></i></h3>
+                        <h5>Perfil</h5>
+                    </button>
+                </div>
+                <div>
+                    <button type="button" id="show-form" class="btn btn-block bg-color-lighter border-color-darker text-white mb-3">
+                        <h3 class="mt-2 mb-2"><i class="far fa-heart"></i></h3>
+                        <h5>¿Qué te parece HM?</h5>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="ml-5 mr-5">
+                    <div class="habits">
+                        <h4>Categorías</h4>
+                        <div id="category-habits" class="funkyradio">
+                        </div>
+                        <button id="category-save" class="btn btn-secondary">Guardar</button>
+                    </div>
+                    <div class="links" style="display: none;">
+                        <p class="text-justify">
+                            Escriba los enlaces de los sitios web a los que le gustaría personalizar el acceso.
+                        </p>
+                        <table id="t-url" class="table table-striped table-bordered" style="width:100%">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th width="80%">Enlace</th>
+                                    <th width="20%">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-url">
+                            </tbody>
+                        </table>
+                        <div id="controls">
+                            <button class="btn btn-secondary" data-toggle="modal" data-target="#modal-add-url">
+                                <i class="fas fa-plus"></i> Agregar enlace
+                            </button>
+                            <button class="btn btn-light" data-toggle="modal" data-target="#modal-set-free-time">
+                                <i class="far fa-clock"></i> Configurar tiempo libre
+                            </button>
+                        </div>
+                    </div>
+                    <div class="profile" style="display: none;">
+                        <h3>Usuario</h3>
+                        <p id="user-name"></p>
+                        <p id="user-id"></p>
+                        <button class="btn btn-secondary" data-toggle="modal" data-target="#modal-set-alert-time">
+                            <i class="far fa-clock"></i> Configurar alerta de hábitos
+                        </button>
+                    </div>
+                    <div class="form" style="display: none;">
+                        <div id="tripetto"></div>
+                        <script src="source/tripetto/runner-foundation.js"></script>
+                        <script src="source/tripetto/runner-chat.js"></script>
+                        <script src="source/tripetto/services.js"></script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modal-add-url" tabindex="-1" role="dialog" aria-labelledby="modal-add-url-label"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-add-url-label">Agregar Enlace</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="input-url"
+                                aria-describedby="url-help" placeholder="Ingresa aquí tu enlace">
+                            <small id="url-help" class="form-text text-muted">
+                                Ej. facebook.com
+                            </small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="add-url">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="modal-set-free-time" tabindex="-1" role="dialog" aria-labelledby="modal-set-free-time-label"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-set-free-time-label">Configurar tiempo libre</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <input type="number" class="form-control" id="input-free-time" min="1">
+                            <small id="url-help" class="form-text text-muted">
+                                Tiempo en minutos.
+                            </small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="update-free-time">Actualizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+     <!-- Modal -->
+     <div class="modal fade" id="modal-set-alert-time" tabindex="-1" role="dialog" aria-labelledby="modal-set-alert-time-label"
+     aria-hidden="true">
+     <div class="modal-dialog" role="document">
+         <div class="modal-content">
+             <div class="modal-header">
+                 <h5 class="modal-title" id="modal-set-alert-time-label">Configurar tiempo de alerta entre hábitos</h5>
+                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                 </button>
+             </div>
+             <div class="modal-body">
+                 <form>
+                     <div class="form-group">
+                         <input type="number" class="form-control" id="input-alert-time" min="1">
+                         <small id="url-help" class="form-text text-muted">
+                             Tiempo en minutos.
+                         </small>
+                     </div>
+                 </form>
+             </div>
+             <div class="modal-footer">
+                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                 <button type="button" class="btn btn-primary" id="update-alert-time">Actualizar</button>
+             </div>
+         </div>
+     </div>
+ </div>
+
+    <!-- JS -->
+    <script src="source/jquery/jquery-3.6.0.js"></script>
+    <script src="source/jquery/jquery.dataTables.min.js"></script>
+    <script src="source/jquery/dataTables.bootstrap4.min.js"></script>
+    <script src="source/jquery/notify.min.js"></script>
+    <script src="source/bootstrap/bootstrap-4.3.1.js"></script>
+    <script src="source/happyminder/options.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400" rel="stylesheet">
+    <link rel="stylesheet" href="source/fontawesome-5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="source/bootstrap/bootstrap-4.3.1.min.css">
+    <link rel="stylesheet" href="source/happyminder/style.css">
+
+    <title>Happy Minder</title>
+</head>
+
+<body>
+    <div class="jumbotron text-center bg-color-main">
+        <h4 class="title-habit ml-5 mr-5"><i class="fa fa-spinner fa-spin"></i></h4>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8 text-center">
+                <div class="img-habit-div mb-5" style="display: none;">
+                    <img id="img-habit" src="https://c.tenor.com/kjTEaH2h3e8AAAAC/loading-waiting.gif" width="200" />
+                </div>
+                <div class="video-habit-div mb-5" style="display: none;">
+                    <iframe id="video-habit" width="560" height="315" src="" frameborder="0" allowfullscreen></iframe>
+                </div>
+                <div class="complementary-info mb-5">
+                </div>
+                <div class="row action-habit">
+                    <div class="col-md-6">
+                        <button type="button" id="reject-habit" class="btn btn-block btn-secondary">
+                            Más tarde
+                            <h3><i class="fas fa-sad-tear"></i></h3>
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" id="accept-habit" class="btn btn-block bg-color-light text-white" data-timer='5'>
+                            ¡Vamos!
+                            <h3><i class="fas fa-laugh-beam"></i></h3>
+                        </button>
+                    </div>
+                </div>
+                <div class="timer-habit" style="display: none;">
+                    <span id="timer">
+                        <h3 id="time"></h3>
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="source/jquery/jquery-3.6.0.js"></script>
+    <script src="source/bootstrap/bootstrap-4.3.1.js"></script>
+    <script src="source/happyminder/minder.js"></script>
+</body>
+
+</html>
