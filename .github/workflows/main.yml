@@ -1,0 +1,17 @@
+- name: Publish Chrome extension to Chrome Web Store
+  # You may pin to the exact commit or the version.
+  # uses: MobileFirstLLC/cws-publish@569e87bc9a54ad7712ba6dc154a110d88af63b85
+  uses: MobileFirstLLC/cws-publish@2.1.1
+  with:
+    # Desired action, one of: upload, publish, testers
+    action: # default is upload
+    # Webstore API client id parameter
+    client_id: 
+    # Webstore API client secret parameter
+    client_secret: 
+    # Webstore API refresh token
+    refresh_token: 
+    # Path to extension .zip file
+    zip_file: 
+    # Unique identifier of the Chrome extension
+    extension_id: 
