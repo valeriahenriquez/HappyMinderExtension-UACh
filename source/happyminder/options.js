@@ -30,7 +30,6 @@ var optionsModule = (function () {
     const $urlDataTable = $('#t-url');
     const $urlInput = $('#input-url');
     const $freeTimeInput = $('#input-free-time');
-    const $alertTimeInput = $('#input-alert-time');
 
     var allUserCategories;
 
@@ -285,7 +284,12 @@ var optionsModule = (function () {
         url = url.replace("www.", "");
         blockedUrl = storage.blocked;
         blockedUrl.push(url);
-        chrome.storage.local.set({ blocked: blockedUrl });
+        chrome.storage.local.set({ blocked: blockedUrl }, function() {
+            // Mostrar un mensaje de éxito al usuario
+            alert("La URL ha sido bloqueada con éxito.");
+            // Actualizar la lista de URLs bloqueadas en la página
+            updateBlockedUrlsList();
+        });
         location.reload();
     };
 
@@ -305,17 +309,9 @@ var optionsModule = (function () {
 
     var updateFreeTime = function () {
         const freeTime = $freeTimeInput.val();
+        
         chrome.storage.local.set({ freeTime: freeTime });
-        location.reload();
-    };
-
-    var initializeAlertTimeModal = function () {
-        $alertTimeInput.val(storage.alertTime);
-    };
-
-    var updateAlertTime = function () {
-        const alertTime = $alertTimeInput.val();
-        chrome.storage.local.set({ alertTime: alertTime });
+        alert("Tiempo libre actualizado");
         location.reload();
     };
 
@@ -351,8 +347,6 @@ var optionsModule = (function () {
         removeUrl: removeUrl,
         initializeFreeTimeModal: initializeFreeTimeModal,
         updateFreeTime: updateFreeTime,
-        initializeAlertTimeModal: initializeAlertTimeModal,
-        updateAlertTime: updateAlertTime,
         tripettoForm: tripettoForm,
     };
 })();
@@ -375,9 +369,7 @@ function init(storage) {
     $('#add-url').on("click", function () { optionsModule.saveUrl() });
     $('#modal-set-free-time').on('shown.bs.modal', function () { optionsModule.initializeFreeTimeModal() });
     $('#update-free-time').on("click", function () { optionsModule.updateFreeTime() });
-    $('#modal-set-alert-time').on('shown.bs.modal', function () { optionsModule.initializeAlertTimeModal() });
-    $('#update-alert-time').on("click", function () { optionsModule.updateAlertTime() });
     optionsModule.loadContentByUser();
-    optionsModule.fetchCategories();
-    optionsModule.initializeUrlDataTable();
+    if (storage.user) optionsModule.fetchCategories();
+    if (storage.user) optionsModule.initializeUrlDataTable();
 }

@@ -37,18 +37,25 @@ var minderModule = (function () {
     }
 
     var getRandomHabitFromAPI = async function () {
-        addLoader($titleContent);
-        try {
-            let query = { "query": `query {habitToDo(userId:"${storage.user.id}"){id,message,timer_long,url_image,url_video,frequency,complementary_information}}` };
-            options['body'] = JSON.stringify(query);
-            const response = await fetch(url, options);
-            const habit = await response.json();
-            await showHabit(habit);
-        } catch (error) {
-            console.error(error);
-            $titleContent.text(defaultItem.message);
-            $acceptBtn.data(defaultItem.timer_long);
-            $timeContent.text(defaultItem.timer_long);
+        if (storage.runningHabit === 1){
+            undoneHabit();
+        }
+        if (storage.temporarilyEnabled.length === 0){
+            addLoader($titleContent);
+            try {
+                let query = { "query": `query {habitToDo(userId:"${storage.user.id}"){id,message,timer_long,url_image,url_video,frequency,complementary_information}}` };
+                options['body'] = JSON.stringify(query);
+                const response = await fetch(url, options);
+                const habit = await response.json();
+                await showHabit(habit);
+            } catch (error) {
+                console.error(error);
+                $titleContent.text(defaultItem.message);
+                $acceptBtn.data(defaultItem.timer_long);
+                $timeContent.text(defaultItem.timer_long);
+            }
+        } else {
+            freeTimeEnabled();
         }
     }
 
@@ -58,6 +65,7 @@ var minderModule = (function () {
             location.reload();
             return;
         }
+        chrome.storage.local.set({ runningHabitID: item.id });
         habitId = item.id;
         $titleContent.text(item.message);
         $acceptBtn.data("timer", item.timer_long);
@@ -83,6 +91,7 @@ var minderModule = (function () {
     var acceptHabit = function () {
         $acceptBtn.on("click", function () {
             trackeHabit(habitId, 'Done', storage.user.id);
+            chrome.storage.local.set({ runningHabit: 1 });
             let timer = $(this).data("timer");
             $actionContent.hide();
             $timerContent.show();
@@ -93,7 +102,22 @@ var minderModule = (function () {
     var rejectHabit = function () {
         $rejectBtn.on("click", function () {
             trackeHabit(habitId, 'Undone', storage.user.id);
-            goToBlockedUrl();
+            $actionContent.hide();
+            $timerContent.show();
+            $timerContainer.html(`
+                <h3>¡Oh no!</h3>
+                <p>Para la próxima esperamos que realices el hábito <i class="far fa-sad-tear"></i></p>
+                <p>Desde ahora podrás acceder a las urls por tiempo limitado.</p>
+                `
+            );
+            storage.blocked.forEach(url => {
+                $timerContainer.append(`
+                    <li>
+                        <a href="http://${url}">${url}</a>
+                    </li>
+                `);
+            });
+            temporarilyEnableUrls();
         });
     }
 
@@ -105,8 +129,9 @@ var minderModule = (function () {
             if (counter <= 0) {
                 clearInterval(interval);
                 $timerContainer.html(`
-                    <h3>Listo</h3>
-                    <p>Desde ahora podrás acceder a las urls por tiempo limitado</p>
+                    <h3>¡Genial!</h3>
+                    <p>Felicitaciones por realizar el hábito <i class="fas fa-laugh-beam"></i></p>
+                    <p>Desde ahora podrás acceder a las urls por tiempo limitado.</p>
                     `
                 );
                 storage.blocked.forEach(url => {
@@ -128,17 +153,12 @@ var minderModule = (function () {
         $content.html('<i class="fa fa-spinner fa-spin"></i>');
     }
 
-    var goToBlockedUrl = function () {
-        window.location.href = "http://" + storage.blockedUrl, "_self";
-    }
-
     var temporarilyEnableUrls = function () {
         if (storage.temporarilyEnabled.length == 0) {
             chrome.storage.local.set({ temporarilyEnabled: storage.blocked });
             chrome.storage.local.set({ blocked: [] });
             let currentTime = (new Date()).toJSON();
             chrome.storage.local.set({ doneHabitAt: currentTime });
-            chrome.storage.local.set({ dateToAlert: currentTime });
         }
     }
 
@@ -166,6 +186,24 @@ var minderModule = (function () {
         var m = date.getMonth() + 1;
         var y = date.getFullYear();
         return '' + (d <= 9 ? '0' + d : d) + '-' + (m <= 9 ? '0' + m : m) + '-' + y;
+    }
+
+    var undoneHabit = function () {
+        trackeHabit(storage.runningHabitID, 'Undone', storage.user.id);
+        chrome.storage.local.set({ runningHabit: 0 });
+        chrome.storage.local.set({ runningHabitID: 0 });
+        console.log('undone');
+    }
+
+    var freeTimeEnabled = function () {
+        $titleContent.text('Tiempo libre');
+        $actionContent.hide();
+        $timerContent.show();
+        $timerContainer.html(`
+            <h3>¡Estás dentro de tu tiempo libre!</h3>
+            <p>Puedes acceder a las urls por tiempo limitado.</p>
+            `
+        );
     }
 
     return {

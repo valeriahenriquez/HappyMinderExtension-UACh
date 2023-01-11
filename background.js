@@ -19,16 +19,26 @@ function instalationInitStorage() {
             // default free time 15 minutes
             chrome.storage.local.set({ freeTime: 15 });
         }
-        if (typeof local.dateToAlert !== "string") {
-            let currentTime = (new Date()).toJSON();
-            chrome.storage.local.set({ dateToAlert: currentTime });
-        }
         if (!local.alertTime) {
             // default alert time 60 minutes
             chrome.storage.local.set({ alertTime: 60 });
         }
+        if (!local.runningHabit) {
+            // default running habbit 0 (boolean value)
+            chrome.storage.local.set({ runningHabit: 0 });
+        }
+        if (!local.runningHabitID) {
+            // default running habbit id
+            chrome.storage.local.set({ runningHabitID: 0 });
+        }
     });
 };
+
+function pop(freeTime){
+    if (freeTime<60){	
+        alert ("mensaje");
+    }
+}
 
 function validateUrl(url) {
     if (!url || !url.startsWith("http")) {
@@ -42,18 +52,29 @@ function checkTemporarilyEnabled(temporarilyEnabled, doneHabitAt, freeTime) {
         let now = new Date();
         let doneAt = new Date(doneHabitAt);
         let diff = parseInt(Math.abs(doneAt.getTime() - now.getTime()) / (1000 * 60) % 60);
+        console.log(diff)
+
         if (diff >= freeTime) {
             chrome.storage.local.set({ blocked: temporarilyEnabled });
             chrome.storage.local.set({ temporarilyEnabled: [] });
+            chrome.storage.local.set({ runningHabit: 0 });
             return false;
         }
     }
+    
     return true;
 };
 
 function blockUrl(blocked, hostname) {
     if (Array.isArray(blocked) && blocked.find(domain => hostname.includes(domain))) {
         var newURL = chrome.runtime.getURL('minder.html');
+        chrome.tabs.update(undefined, { url: newURL });
+    }
+};
+
+function doneUrl(blocked, hostname) {
+    if (Array.isArray(blocked) && blocked.find(domain => hostname.includes(domain))) {
+        var newURL = chrome.runtime.getURL('done.html');
         chrome.tabs.update(undefined, { url: newURL });
     }
 };
@@ -68,50 +89,8 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
             if (checkTemporarilyEnabled(s.temporarilyEnabled, s.doneHabitAt, s.freeTime)) {
                 blockUrl(s.blocked, hostname);
             } else {
-                var newURL = chrome.runtime.getURL('done.html');
-                chrome.tabs.update(undefined, { url: newURL });
+                doneUrl(s.blocked, hostname);
             }
         });
     }
 });
-
-chrome.tabs.onActivated.addListener(function (tab) {
-    chrome.storage.local.get(function (s) {
-        let now = new Date();
-        let currentTime = now.toJSON();
-        let dateAt = new Date(s.dateToAlert);
-        let diff = parseInt(Math.abs(dateAt.getTime() - now.getTime()) / (1000 * 60) % 60);
-        if (diff > s.alertTime) {
-            openMinderPage();
-            chrome.storage.local.set({ dateToAlert: currentTime });
-        }
-    });
-});
-
-function openMinderPage() {
-    var newURL = chrome.runtime.getURL('minder.html');
-    chrome.tabs.create({ url: newURL });
-};
-
-
-// chrome.tabs.onActivated.addListener(function (activeInfo) {
-//     chrome.tabs.query({}, function (tabs) {
-//         console.log(tabs)
-//         tabs.forEach(tab => {
-//             if (validateUrl(tab.url)) {
-//                 const hostname = new URL(tab.url).hostname;
-//                 chrome.storage.local.get(function (s) {
-//                     if (checkTemporarilyEnabled(s.temporarilyEnabled, s.doneHabitAt)){ return; }
-//                     if (Array.isArray(s.blocked) && s.blocked.find(domain => hostname.includes(domain))) {
-//                         if (tab.active){
-//                             console.log(tab.url);
-//                             // blockUrl(s.blocked, hostname);
-//                         }else{
-//                             chrome.tabs.remove(tab.id);
-//                         }
-//                     }
-//                 });
-//             }
-//         });
-//     });
-// });
