@@ -126,7 +126,7 @@ var optionsModule = (function () {
                     <input type="text" class="form-control" id="username" placeholder="Ingresa tu nombre">
                 </div>
                 <button id="login-in" type="button" class="btn btn-secondary">
-                    Ingresar
+                    Ingresarrrrrr
                 </button>
                 `
             );

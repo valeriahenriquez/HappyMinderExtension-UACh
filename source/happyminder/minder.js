@@ -93,6 +93,7 @@ var minderModule = (function () {
     var rejectHabit = function () {
         $rejectBtn.on("click", function () {
             trackeHabit(habitId, 'Undone', storage.user.id);
+            temporarilyEnableUrls();
             goToBlockedUrl();
         });
     }
@@ -117,6 +118,7 @@ var minderModule = (function () {
                     `);
                 });
                 temporarilyEnableUrls();
+                goToBlockedUrl();
                 return;
             } else {
                 $timeContent.text(counter);
@@ -129,7 +131,8 @@ var minderModule = (function () {
     }
 
     var goToBlockedUrl = function () {
-        window.location.href = "http://" + storage.blockedUrl, "_self";
+        window.location.href = "http://" + storage.currentURLBlocked, "_self";
+        // window.location.href = "http://" + storage.blockedUrl, "_self";
     }
 
     var temporarilyEnableUrls = function () {

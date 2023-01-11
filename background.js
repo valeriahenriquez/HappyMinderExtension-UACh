@@ -64,6 +64,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     const url = tab.url;
     if (validateUrl(url)) {
         const hostname = new URL(url).hostname;
+        chrome.storage.local.set({currentURLBlocked: hostname});
         chrome.storage.local.get(function (s) {
             if (checkTemporarilyEnabled(s.temporarilyEnabled, s.doneHabitAt, s.freeTime)) {
                 blockUrl(s.blocked, hostname);
