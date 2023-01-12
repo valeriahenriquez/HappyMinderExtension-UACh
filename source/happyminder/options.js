@@ -1,3 +1,9 @@
+ /**
+     * Module
+     * @version 1.0
+     * @exports optionsModule_iife/fn
+     * @namespace optionsModule_iife
+*/
 var optionsModule = (function () {
 
     const url = "http://96.126.120.113:8000/graphql";
@@ -230,6 +236,8 @@ var optionsModule = (function () {
 
     /**
     * Creates a new user with a specified desired impact category in the Habits section
+    * @memberof optionsModule_iife
+    * @method createHabitsUser
     * @async
     * @function
     * @param {string} user - The user's name
